@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Assessment - Professional Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0A0E27;
+            --secondary: #1E3A8A;
+            --accent: #3B82F6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --white: #FFFFFF;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--light);
+            color: var(--primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Container e Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: pulse 20s ease-in-out infinite;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            animation: fadeIn 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* Logo e Branding */
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .logo-small {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* Botões */
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Formulários */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* Questions */
+        .question-card {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .option {
+            background: var(--white);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        /* Profiles */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 12px;
+        }
+
+        .profile-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2.5rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(45deg);
+            transition: transform 0.6s;
+        }
+
+        .profile-icon:hover::after {
+            transform: rotate(45deg) translateY(300%);
+        }
+
+        /* Scores */
+        .score-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid currentColor;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Admin Panel */
+        .admin-nav {
+            background: var(--primary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .admin-nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .admin-menu-item {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .admin-menu-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .admin-menu-item:hover::after {
+            width: 100%;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: var(--accent);
+            opacity: 0.1;
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .mt-5 { margin-top: 3rem; }
+
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+        .mb-5 { margin-bottom: 3rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 2rem 0;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .admin-nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .admin-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .btn,
+            .admin-nav,
+            .modal {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero/Home Page -->
+    <div id="homePage" class="hero">
+        <div class="container">
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="logo">EXEVOLURE</div>
+                <p class="tagline">Análise Comportamental Profissional</p>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="startNewTest()">
+                        Iniciar Teste
+                    </button>
+                    <button class="btn btn-secondary" onclick="showLoginModal()">
+                        Login Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden">
+        <nav class="admin-nav">
+            <div class="container">
+                <div class="admin-nav-content">
+                    <div class="logo logo-small" style="color: white;">EXEVOLURE</div>
+                    <div class="admin-menu">
+                        <a href="#" class="admin-menu-item" onclick="showDashboard()">Dashboard</a>
+                        <a href="#" class="admin-menu-item" onclick="showHistory()">Histórico</a>
+                        <a href="#" class="admin-menu-item" onclick="showCompare()">Comparar</a>
+                        <a href="#" class="admin-menu-item" onclick="showReports()">Relatórios</a>
+                        <button class="btn btn-small btn-danger" onclick="logout()">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <!-- Dashboard Content -->
+            <div id="dashboardContent">
+                <h1 class="mb-4">Dashboard Administrativo</h1>
+                
+                <div class="grid grid-4 mb-5">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTests">0</div>
+                        <div class="stat-label">Total de Testes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgScore">0%</div>
+                        <div class="stat-label">Perfil Dominante</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="recentTests">0</div>
+                        <div class="stat-label">Últimos 30 dias</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="uniqueUsers">0</div>
+                        <div class="stat-label">Participantes</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="mb-3">Ações Rápidas</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="startNewTest()">Novo Teste</button>
+                        <button class="btn" onclick="showHistory()">Ver Histórico</button>
+                        <button class="btn" onclick="showCompare()">Comparar Perfis</button>
+                        <button class="btn btn-success" onclick="exportAllData()">Exportar Dados</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Content -->
+            <div id="historyContent" class="hidden">
+                <h1 class="mb-4">Histórico de Testes</h1>
+                <div id="historyList"></div>
+            </div>
+
+            <!-- Compare Content -->
+            <div id="compareContent" class="hidden">
+                <h1 class="mb-4">Comparar Perfis</h1>
+                <div id="compareArea"></div>
+            </div>
+
+            <!-- Reports Content -->
+            <div id="reportsContent" class="hidden">
+                <h1 class="mb-4">Relatórios</h1>
+                <div class="card">
+                    <p>Funcionalidade de relatórios em desenvolvimento...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Page -->
+    <div id="infoPage" class="hidden">
+        <div class="container mt-5">
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <div class="logo logo-small">EXEVOLURE</div>
+                <h1 class="text-center mb-4">Informações Pessoais</h1>
+                
+                <form id="infoForm">
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-input" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Idade *</label>
+                            <input type="number" class="form-input" id="age" min="16" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profissão *</label>
+                            <input type="text" class="form-input" id="profession" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Experiência</label>
+                            <select class="form-input" id="experience">
+                                <option value="">Selecione...</option>
+                                <option value="0-1">0-1 anos</option>
+                                <option value="2-5">2-5 anos</option>
+                                <option value="6-10">6-10 anos</option>
+                                <option value="11-15">11-15 anos</option>
+                                <option value="16+">Mais de 16 anos</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Departamento</label>
+                            <input type="text" class="form-input" id="department" placeholder="Ex: Vendas, RH, TI">
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group mt-4">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">Voltar</button>
+                        <button type="button" class="btn btn-primary" onclick="beginTest()">Começar Teste</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Page -->
+    <div id="testPage" class="hidden">
+        <div class="container mt-5">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="logo logo-small">EXEVOLURE</div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress" class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div id="questionNum" class="progress-text">Pergunta 1 de 20</div>
+                </div>
+                
+                <div class="question-card">
+                    <div id="questionText" class="question-text"></div>
+                    <div id="optionsContainer"></div>
+                </div>
+                
+                <div class="text-center">
+                    <button class="btn btn-danger" onclick="cancelTest()">Cancelar Teste</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="resultsPage" class="hidden">
+        <div class="container mt-5">
+            <div class="card">
+                <div class="logo logo-small">EXEVOLURE</div>
+                <h1 class="text-center mb-4">Análise Comportamental DISC</h1>
+                
+                <div id="profileInfo"></div>
+                
+                <div class="grid grid-4 mb-5" id="scoresGrid"></div>
+                
+                <div class="grid grid-2 mb-5">
+                    <div class="card">
+                        <h3 class="text-center mb-3">Distribuição DISC</h3>
+                        <div style="height: 300px;">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-center mb-3">Perfil Radar</h3>
+                        <div style="height: 300px;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-2 mb-5">
+                    <div class="card" style="background: #F0FDF4;">
+                        <h3 style="color: var(--success);" class="mb-3">Pontos Fortes</h3>
+                        <div id="strengths"></div>
+                    </div>
+                    <div class="card" style="background: #FEF3C7;">
+                        <h3 style="color: var(--warning);" class="mb-3">Áreas de Desenvolvimento</h3>
+                        <div id="challenges"></div>
+                    </div>
+                </div>
+                
+                <div class="card mb-5" style="background: #EFF6FF;">
+                    <h3 style="color: var(--accent);" class="mb-3">Recomendações de Desenvolvimento</h3>
+                    <div id="tips"></div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveTest()">Salvar Teste</button>
+                    <button class="btn" onclick="printTest()">Imprimir</button>
+                    <button class="btn" onclick="exportTest()">Exportar PDF</button>
+                    <button class="btn btn-primary" onclick="startNewTest()">Novo Teste</button>
+                    <button class="btn btn-secondary" onclick="goHome()">Voltar ao Início</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Login Administrativo</h2>
+                <p style="color: var(--gray);">Acesse o painel de gestão</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Usuário</label>
+                    <input type="text" class="form-input" id="adminUser" value="admin">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <input type="password" class="form-input" id="adminPassword">
+                </div>
+                
+                <div class="btn-group mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="doLogin()">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let currentQuestion = 0;
+        let answers = [];
+        let userData = {};
+        let testResult = null;
+        let allTests = [];
+        let isAdminLoggedIn = false;
+        const ADMIN_PASSWORD = "disc2024"; // Altere conforme necessário
+
+        // Perguntas do teste DISC
+        const questions = [
+            {
+                text: "Em situações de trabalho em equipe, eu tendo a:",
+                options: [
+                    {text: "Assumir a liderança e direcionar o grupo", type: "D", value: 4},
+                    {text: "Motivar e energizar os membros da equipe", type: "I", value: 4},
+                    {text: "Apoiar e colaborar harmoniosamente", type: "S", value: 4},
+                    {text: "Analisar e organizar as tarefas detalhadamente", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Quando enfrento um problema complexo, minha primeira reação é:",
+                options: [
+                    {text: "Agir rapidamente para encontrar uma solução", type: "D", value: 4},
+                    {text: "Discutir com outros para obter diferentes perspectivas", type: "I", value: 4},
+                    {text: "Buscar estabilidade e evitar mudanças bruscas", type: "S", value: 4},
+                    {text: "Pesquisar e analisar todos os dados disponíveis", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Em reuniões, eu costumo:",
+                options: [
+                    {text: "Dominar a discussão e tomar decisões", type: "D", value: 4},
+                    {text: "Contribuir com ideias criativas e entusiasmo", type: "I", value: 4},
+                    {text: "Escutar atentamente e apoiar os outros", type: "S", value: 4},
+                    {text: "Fazer perguntas detalhadas e questionar dados", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Meu estilo de comunicação é mais:",
+                options: [
+                    {text: "Direto e objetivo ao ponto", type: "D", value: 4},
+                    {text: "Expressivo e cheio de energia", type: "I", value: 4},
+                    {text: "Calmo e diplomático", type: "S", value: 4},
+                    {text: "Preciso e baseado em fatos", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Quando preciso tomar uma decisão importante:",
+                options: [
+                    {text: "Decido rapidamente baseado na minha intuição", type: "D", value: 4},
+                    {text: "Consulto várias pessoas para obter opiniões", type: "I", value: 4},
+                    {text: "Considero o impacto em todas as pessoas envolvidas", type: "S", value: 4},
+                    {text: "Analiso cuidadosamente todos os prós e contras", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Em situações de pressão, eu:",
+                options: [
+                    {text: "Me torno mais assertivo e competitivo", type: "D", value: 4},
+                    {text: "Busco apoio e motivação dos outros", type: "I", value: 4},
+                    {text: "Mantenho a calma e busco harmonia", type: "S", value: 4},
+                    {text: "Foco em detalhes e procedimentos", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Meu ambiente de trabalho ideal é:",
+                options: [
+                    {text: "Dinâmico com desafios constantes", type: "D", value: 4},
+                    {text: "Social e colaborativo", type: "I", value: 4},
+                    {text: "Estável e previsível", type: "S", value: 4},
+                    {text: "Organizado e sistemático", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Quando recebo feedback negativo:",
+                options: [
+                    {text: "Questiono e defendo meu ponto de vista", type: "D", value: 4},
+                    {text: "Fico desapontado mas busco melhorar", type: "I", value: 4},
+                    {text: "Aceito calmamente e evito conflitos", type: "S", value: 4},
+                    {text: "Analiso criticamente para entender os detalhes", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Minha abordagem para resolver conflitos é:",
+                options: [
+                    {text: "Confrontar diretamente o problema", type: "D", value: 4},
+                    {text: "Usar persuasão e carisma", type: "I", value: 4},
+                    {text: "Buscar compromisso e harmonia", type: "S", value: 4},
+                    {text: "Focar em fatos e lógica", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Em projetos, eu prefiro:",
+                options: [
+                    {text: "Liderar e definir a direção", type: "D", value: 4},
+                    {text: "Brainstorming e geração de ideias", type: "I", value: 4},
+                    {text: "Implementação consistente e apoio", type: "S", value: 4},
+                    {text: "Planejamento detalhado e controle de qualidade", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Meu ritmo de trabalho é:",
+                options: [
+                    {text: "Rápido e intenso", type: "D", value: 4},
+                    {text: "Variável, dependendo da motivação", type: "I", value: 4},
+                    {text: "Constante e equilibrado", type: "S", value: 4},
+                    {text: "Meticuloso e cuidadoso", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Quando trabalho em equipe, eu:",
+                options: [
+                    {text: "Assumo o controle e dirijo", type: "D", value: 4},
+                    {text: "Animo e inspiro os outros", type: "I", value: 4},
+                    {text: "Apoio e colaboro lealmente", type: "S", value: 4},
+                    {text: "Garanto precisão e qualidade", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Minha maior motivação no trabalho é:",
+                options: [
+                    {text: "Alcançar resultados e vencer desafios", type: "D", value: 4},
+                    {text: "Reconhecimento e interação social", type: "I", value: 4},
+                    {text: "Segurança e harmonia no ambiente", type: "S", value: 4},
+                    {text: "Precisão e excelência técnica", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Quando enfrento mudanças, eu:",
+                options: [
+                    {text: "Adapto-me rapidamente e busco oportunidades", type: "D", value: 4},
+                    {text: "Fico ansioso mas busco o lado positivo", type: "I", value: 4},
+                    {text: "Resisto e prefiro estabilidade", type: "S", value: 4},
+                    {text: "Questiono e analiso as implicações", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Meu estilo de liderança é:",
+                options: [
+                    {text: "Autoritário e orientado para resultados", type: "D", value: 4},
+                    {text: "Inspirador e motivacional", type: "I", value: 4},
+                    {text: "Colaborativo e de apoio", type: "S", value: 4},
+                    {text: "Baseado em dados e processos", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Em situações sociais no trabalho, eu:",
+                options: [
+                    {text: "Foco nos objetivos e resultados", type: "D", value: 4},
+                    {text: "Interajo ativamente com todos", type: "I", value: 4},
+                    {text: "Sou amigável mas reservado", type: "S", value: 4},
+                    {text: "Observo e participo seletivamente", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Minha abordagem para aprender algo novo é:",
+                options: [
+                    {text: "Experimentar e aprender fazendo", type: "D", value: 4},
+                    {text: "Discutir com outros e trocar experiências", type: "I", value: 4},
+                    {text: "Seguir um método estruturado e gradual", type: "S", value: 4},
+                    {text: "Estudar teorias e analisar exemplos", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Quando cometo um erro, eu:",
+                options: [
+                    {text: "Assumo a responsabilidade e sigo em frente", type: "D", value: 4},
+                    {text: "Explico as circunstâncias e busco compreensão", type: "I", value: 4},
+                    {text: "Me desculpo e trabalho para corrigir", type: "S", value: 4},
+                    {text: "Analiso o que deu errado para evitar repetir", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Meu estilo de tomada de decisão é:",
+                options: [
+                    {text: "Rápido e baseado na experiência", type: "D", value: 4},
+                    {text: "Intuitivo e influenciado por outros", type: "I", value: 4},
+                    {text: "Cuidadoso e considerando impactos", type: "S", value: 4},
+                    {text: "Sistemático e baseado em dados", type: "C", value: 4}
+                ]
+            },
+            {
+                text: "Em situações de estresse, eu tendo a:",
+                options: [
+                    {text: "Ficar mais impaciente e direto", type: "D", value: 4},
+                    {text: "Buscar apoio emocional dos outros", type: "I", value: 4},
+                    {text: "Evitar confrontos e buscar calma", type: "S", value: 4},
+                    {text: "Focar em detalhes e controle", type: "C", value: 4}
+                ]
+            }
+        ];
+
+        // Perfis DISC
+        const profiles = {
+            D: {
+                title: "Dominância",
+                description: "Orientado para resultados, assertivo e competitivo",
+                color: "#EF4444",
+                strengths: [
+                    "Liderança natural e iniciativa",
+                    "Foco em resultados e produtividade",
+                    "Capacidade de tomar decisões difíceis",
+                    "Persistência diante de obstáculos",
+                    "Eficiência e orientação para objetivos"
+                ],
+                challenges: [
+                    "Pode ser muito direto ou impaciente",
+                    "Tendência a ser controlador",
+                    "Dificuldade em delegar",
+                    "Pouca paciência com detalhes",
+                    "Pode intimidar outros"
+                ],
+                tips: [
+                    "Pratique a escuta ativa e empática",
+                    "Desenvolva paciência com processos",
+                    "Aprenda a delegar efetivamente",
+                    "Trabalhe na comunicação empática",
+                    "Valorize as contribuições da equipe"
+                ]
+            },
+            I: {
+                title: "Influência",
+                description: "Sociável, otimista e persuasivo",
+                color: "#F59E0B",
+                strengths: [
+                    "Excelente comunicação e networking",
+                    "Capacidade de motivar e inspirar",
+                    "Criatividade e pensamento inovador",
+                    "Adaptabilidade e flexibilidade",
+                    "Habilidade de trabalhar em equipe"
+                ],
+                challenges: [
+                    "Pode ser desorganizado",
+                    "Tendência a ser impulsivo",
+                    "Dificuldade com tarefas detalhadas",
+                    "Pode prometer demais",
+                    "Precisa de reconhecimento constante"
+                ],
+                tips: [
+                    "Desenvolva sistemas de organização",
+                    "Pratique o planejamento detalhado",
+                    "Aprenda a definir prioridades",
+                    "Trabalhe na consistência",
+                    "Foque em finalizar projetos"
+                ]
+            },
+            S: {
+                title: "Estabilidade",
+                description: "Paciente, leal e colaborativo",
+                color: "#10B981",
+                strengths: [
+                    "Excelente trabalho em equipe",
+                    "Confiabilidade e consistência",
+                    "Paciência e diplomacia",
+                    "Capacidade de mediar conflitos",
+                    "Lealdade e comprometimento"
+                ],
+                challenges: [
+                    "Resistência a mudanças",
+                    "Dificuldade em dizer não",
+                    "Evita confrontos necessários",
+                    "Pode ser indeciso",
+                    "Precisa de mais assertividade"
+                ],
+                tips: [
+                    "Pratique a assertividade",
+                    "Desenvolva tolerância à mudança",
+                    "Aprenda a expressar opiniões",
+                    "Trabalhe na tomada de decisões",
+                    "Defina limites pessoais"
+                ]
+            },
+            C: {
+                title: "Conformidade",
+                description: "Analítico, preciso e sistemático",
+                color: "#3B82F6",
+                strengths: [
+                    "Atenção excepcional aos detalhes",
+                    "Pensamento analítico e lógico",
+                    "Foco na qualidade e precisão",
+                    "Planejamento sistemático",
+                    "Capacidade de resolver problemas complexos"
+                ],
+                challenges: [
+                    "Pode ser perfeccionista demais",
+                    "Dificuldade com prazos apertados",
+                    "Resistência a mudanças rápidas",
+                    "Pode ser crítico demais",
+                    "Precisa de mais flexibilidade"
+                ],
+                tips: [
+                    "Pratique a flexibilidade",
+                    "Aprenda a trabalhar com prazos",
+                    "Desenvolva habilidades sociais",
+                    "Trabalhe na comunicação",
+                    "Aceite que nem tudo precisa ser perfeito"
+                ]
+            }
+        };
+
+        // Inicialização
+        function init() {
+            loadTestsFromStorage();
+            checkAdminSession();
+            updateDashboardStats();
+        }
+
+        // Carrega testes do localStorage
+        function loadTestsFromStorage() {
+            try {
+                const saved = localStorage.getItem('discTests');
+                allTests = saved ? JSON.parse(saved) : [];
+            } catch (e) {
+                allTests = [];
+            }
+        }
+
+        // Salva testes no localStorage
+        function saveTestsToStorage() {
+            try {
+                localStorage.setItem('discTests', JSON.stringify(allTests));
+            } catch (e) {
+                console.error('Erro ao salvar testes:', e);
+            }
+        }
+
+        // Verifica sessão admin
+        function checkAdminSession() {
+            const adminSession = sessionStorage.getItem('discAdminLoggedIn');
+            isAdminLoggedIn = adminSession === 'true';
+            
+            if (isAdminLoggedIn) {
+                showAdminDashboard();
+            }
+        }
+
+        // Login Modal
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('adminPassword').focus();
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        // Login Admin
+        function doLogin() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('discAdminLoggedIn', 'true');
+                closeLoginModal();
+                showAdminDashboard();
+            } else {
+                alert('Senha incorreta!');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        // Logout
+        function logout() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('discAdminLoggedIn');
+            goHome();
+        }
+
+        // Navegação
+        function goHome() {
+            if (isAdminLoggedIn) {
+                showAdminDashboard();
+            } else {
+                showPage('homePage');
+            }
+        }
+
+        function goBack() {
+            if (isAdminLoggedIn) {
+                showAdminDashboard();
+            } else {
+                goHome();
+            }
+        }
+
+        function showPage(pageId) {
+            const pages = ['homePage', 'adminDashboard', 'infoPage', 'testPage', 'resultsPage'];
+            pages.forEach(page => {
+                const element = document.getElementById(page);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+            
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+        }
+
+        // Admin Dashboard
+        function showAdminDashboard() {
+            showPage('adminDashboard');
+            showDashboard();
+            updateDashboardStats();
+        }
+
+        function showDashboard() {
+            hideAllAdminContent();
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            updateDashboardStats();
+        }
+
+        function showHistory() {
+            hideAllAdminContent();
+            document.getElementById('historyContent').classList.remove('hidden');
+            loadHistoryList();
+        }
+
+        function showCompare() {
+            hideAllAdminContent();
+            document.getElementById('compareContent').classList.remove('hidden');
+            loadCompareInterface();
+        }
+
+        function showReports() {
+            hideAllAdminContent();
+            document.getElementById('reportsContent').classList.remove('hidden');
+        }
+
+        function hideAllAdminContent() {
+            ['dashboardContent', 'historyContent', 'compareContent', 'reportsContent'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+        }
+
+        // Dashboard Stats
+        function updateDashboardStats() {
+            if (!isAdminLoggedIn) return;
+            
+            document.getElementById('totalTests').textContent = allTests.length;
+            
+            // Calcular perfil dominante mais comum
+            const profileCounts = {D: 0, I: 0, S: 0, C: 0};
+            allTests.forEach(test => {
+                if (test.dominant) {
+                    profileCounts[test.dominant]++;
+                }
+            });
+            
+            const dominantProfile = Object.keys(profileCounts).reduce((a, b) => 
+                profileCounts[a] > profileCounts[b] ? a : b
+            );
+            
+            document.getElementById('avgScore').textContent = dominantProfile || '-';
+            
+            // Testes nos últimos 30 dias
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const recentTests = allTests.filter(test => 
+                new Date(test.date) > thirtyDaysAgo
+            ).length;
+            
+            document.getElementById('recentTests').textContent = recentTests;
+            
+            // Participantes únicos
+            const uniqueNames = new Set(allTests.map(test => test.user?.name)).size;
+            document.getElementById('uniqueUsers').textContent = uniqueNames;
+        }
+
+        // Novo teste
+        function startNewTest() {
+            currentQuestion = 0;
+            answers = [];
+            userData = {};
+            testResult = null;
+            showPage('infoPage');
+        }
+
+        // Começar teste
+        function beginTest() {
+            const name = document.getElementById('name').value.trim();
+            const age = document.getElementById('age').value;
+            const profession = document.getElementById('profession').value.trim();
+            
+            if (!name || !age || !profession) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            userData = {
+                name: name,
+                email: document.getElementById('email').value.trim(),
+                age: parseInt(age),
+                profession: profession,
+                experience: document.getElementById('experience').value,
+                department: document.getElementById('department').value.trim(),
+                date: new Date().toISOString()
+            };
+            
+            showPage('testPage');
+            loadQuestion();
+        }
+
+        // Carregar pergunta
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                calculateResults();
+                return;
+            }
+            
+            const question = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('questionNum').textContent = 
+                `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+            document.getElementById('questionText').textContent = question.text;
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = option.text;
+                optionDiv.onclick = () => selectAnswer(option);
+                container.appendChild(optionDiv);
+            });
+        }
+
+        // Selecionar resposta
+        function selectAnswer(option) {
+            answers.push(option);
+            currentQuestion++;
+            
+            setTimeout(() => {
+                loadQuestion();
+            }, 300);
+        }
+
+        // Cancelar teste
+        function cancelTest() {
+            if (confirm('Tem certeza que deseja cancelar o teste?')) {
+                goBack();
+            }
+        }
+
+        // Calcular resultados
+        function calculateResults() {
+            const scores = {D: 0, I: 0, S: 0, C: 0};
+            
+            answers.forEach(answer => {
+                scores[answer.type] += answer.value;
+            });
+            
+            const total = scores.D + scores.I + scores.S + scores.C;
+            const percentages = {
+                D: Math.round((scores.D / total) * 100),
+                I: Math.round((scores.I / total) * 100),
+                S: Math.round((scores.S / total) * 100),
+                C: Math.round((scores.C / total) * 100)
+            };
+            
+            let dominant = 'D';
+            Object.keys(percentages).forEach(type => {
+                if (percentages[type] > percentages[dominant]) {
+                    dominant = type;
+                }
+            });
+            
+            testResult = {
+                user: userData,
+                scores: percentages,
+                dominant: dominant,
+                profile: profiles[dominant],
+                date: new Date().toISOString(),
+                id: Date.now().toString()
+            };
+            
+            showResults();
+        }
+
+        // Mostrar resultados
+        function showResults() {
+            showPage('resultsPage');
+            
+            // Profile info
+            const profileInfo = document.getElementById('profileInfo');
+            profileInfo.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-icon" style="background-color: ${testResult.profile.color};">
+                        ${testResult.dominant}
+                    </div>
+                    <div>
+                        <h2>${testResult.profile.title}</h2>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">${testResult.profile.description}</p>
+                        <p><strong>${testResult.user.name}</strong> • ${testResult.user.profession}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Scores
+            const scoresGrid = document.getElementById('scoresGrid');
+            scoresGrid.innerHTML = '';
+            
+            Object.keys(profiles).forEach(type => {
+                const scoreCard = document.createElement('div');
+                scoreCard.className = 'score-card';
+                scoreCard.innerHTML = `
+                    <div class="score-circle" style="background-color: ${profiles[type].color};">
+                        ${testResult.scores[type]}%
+                    </div>
+                    <h4>${profiles[type].title}</h4>
+                `;
+                scoresGrid.appendChild(scoreCard);
+            });
+            
+            // Strengths, challenges, tips
+            document.getElementById('strengths').innerHTML = 
+                testResult.profile.strengths.map(s => `<p>• ${s}</p>`).join('');
+            
+            document.getElementById('challenges').innerHTML = 
+                testResult.profile.challenges.map(c => `<p>• ${c}</p>`).join('');
+            
+            document.getElementById('tips').innerHTML = 
+                testResult.profile.tips.map(t => `<p>• ${t}</p>`).join('');
+            
+            // Charts
+            setTimeout(() => {
+                createCharts();
+            }, 100);
+        }
+
+        // Criar gráficos
+        function createCharts() {
+            // Bar chart
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Dominância', 'Influência', 'Estabilidade', 'Conformidade'],
+                    datasets: [{
+                        data: [
+                            testResult.scores.D,
+                            testResult.scores.I,
+                            testResult.scores.S,
+                            testResult.scores.C
+                        ],
+                        backgroundColor: [
+                            profiles.D.color,
+                            profiles.I.color,
+                            profiles.S.color,
+                            profiles.C.color
+                        ],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Radar chart
+            const radarCtx = document.getElementById('radarChart').getContext('2d');
+            new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Dominância', 'Influência', 'Estabilidade', 'Conformidade'],
+                    datasets: [{
+                        data: [
+                            testResult.scores.D,
+                            testResult.scores.I,
+                            testResult.scores.S,
+                            testResult.scores.C
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3B82F6',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#3B82F6',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#3B82F6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                display: false
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Salvar teste
+        function saveTest() {
+            if (testResult) {
+                allTests.push(testResult);
+                saveTestsToStorage();
+                alert('Teste salvo com sucesso!');
+                updateDashboardStats();
+            }
+        }
+
+        // Imprimir teste
+        function printTest() {
+            window.print();
+        }
+
+        // Exportar teste
+        function exportTest() {
+            alert('Funcionalidade de exportação PDF em desenvolvimento...');
+        }
+
+        // Histórico
+        function loadHistoryList() {
+            const container = document.getElementById('historyList');
+            
+            if (allTests.length === 0) {
+                container.innerHTML = '<div class="card"><p class="text-center">Nenhum teste encontrado.</p></div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            allTests.slice().reverse().forEach(test => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="color: ${test.profile.color};">${test.profile.title}</h3>
+                            <p><strong>${test.user.name}</strong> • ${test.user.profession}</p>
+                            <p style="color: var(--gray); font-size: 0.875rem;">
+                                ${new Date(test.date).toLocaleString('pt-BR')}
+                            </p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-small" onclick="viewTest('${test.id}')">Ver</button>
+                            <button class="btn btn-small btn-danger" onclick="deleteTest('${test.id}')">Excluir</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Ver teste
+        function viewTest(testId) {
+            const test = allTests.find(t => t.id === testId);
+            if (test) {
+                testResult = test;
+                showResults();
+            }
+        }
+
+        // Excluir teste
+        function deleteTest(testId) {
+            if (confirm('Tem certeza que deseja excluir este teste?')) {
+                allTests = allTests.filter(t => t.id !== testId);
+                saveTestsToStorage();
+                loadHistoryList();
+                updateDashboardStats();
+            }
+        }
+
+        // Comparar perfis
+        function loadCompareInterface() {
+            const container = document.getElementById('compareArea');
+            
+            if (allTests.length < 2) {
+                container.innerHTML = '<div class="card"><p class="text-center">É necessário pelo menos 2 testes para comparar.</p></div>';
+                return;
+            }
+            
+            container.innerHTML = '<div class="card"><p class="text-center">Funcionalidade de comparação em desenvolvimento...</p></div>';
+        }
+
+        // Exportar todos os dados
+        function exportAllData() {
+            const dataStr = JSON.stringify(allTests, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `disc-tests-export-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Event listeners
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const modal = document.getElementById('loginModal');
+                if (modal.classList.contains('active')) {
+                    doLogin();
+                }
+            }
+        });
+
+        // Inicializar quando a página carregar
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
